@@ -7,12 +7,10 @@ class DomainValidator:
 
     @classmethod
     def validate(cls, domain):
-        """Проверяет, является ли строка синтаксически корректным доменным именем."""
         return re.match(cls.DOMAIN_REGEX, domain) is not None
 
     @classmethod
     def extract_from_text(cls, text):
-        """Извлекает все корректные доменные имена из текста."""
         return re.findall(cls.DOMAIN_REGEX, text)
 
 
@@ -21,7 +19,6 @@ class FileDomainExtractor:
         self.file_path = file_path
 
     def extract(self):
-        """Читает файл и извлекает доменные имена."""
         try:
             with open(self.file_path, 'r', encoding='utf-8') as file:
                 content = file.read()
@@ -35,7 +32,6 @@ class URLDomainExtractor:
         self.url = url
 
     def extract(self):
-        """Загружает содержимое страницы по URL и извлекает доменные имена."""
         try:
             response = requests.get(self.url)
             response.raise_for_status()
