@@ -5,19 +5,16 @@ from main import DomainValidator, FileDomainExtractor
 
 class TestDomainValidator(unittest.TestCase):
     def test_validate_correct_domain(self):
-        # Проверяем корректные доменные имена
         self.assertTrue(DomainValidator.validate("example.com"))
-        self.assertTrue(DomainValidator.validate("sub.domain.org"))
+        self.assertTrue(DomainValidator.validate("sub.example.com"))
 
 
     def test_extract_from_text(self):
-        # Проверяем извлечение доменных имён из текста
-        text = "stankin.ru vk.com"
+        text = "Официальный сайт СТАНКИН - stankin.ru, на сайте vk.com есть группа с подробной информацией об этом вузе."
         result = DomainValidator.extract_from_text(text)
         self.assertEqual(result, ["stankin.ru", "vk.com"])
 
     def test_extract_from_text_no_domains(self):
-        # Проверяем случай, когда доменные имена отсутствуют
         text = "No domains here!"
         result = DomainValidator.extract_from_text(text)
         self.assertEqual(result, [])
