@@ -1,9 +1,7 @@
 import re
-import requests
 
 class DomainValidator:
-    DOMAIN_REGEX = r"^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(?:\.[A-Za-z]{2,})+$"
-
+    DOMAIN_REGEX = r"\b(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.[A-Za-z]{2,}\b"
 
     @classmethod
     def validate(cls, domain):
@@ -27,31 +25,15 @@ class FileDomainExtractor:
             raise ValueError(f"Файл по пути {self.file_path} не найден.")
 
 
-class URLDomainExtractor:
-    def __init__(self, url):
-        self.url = url
-
-    def extract(self):
-        try:
-            response = requests.get(self.url)
-            response.raise_for_status()
-            return DomainValidator.extract_from_text(response.text)
-        except requests.RequestException as e:
-            raise ValueError(f"Ошибка при загрузке страницы: {e}")
-
-
 class DomainCheckerApp:
     def run(self):
         print("1. Проверить доменное имя")
-        print("2. Найти доменные имена на веб-странице")
-        print("3. Найти доменные имена в файле")
-        choice = input("Выберите действие (1/2/3): ").strip()
+        print("2. Найти доменные имена в файле")
+        choice = input("Выберите действие (1/2): ").strip()
 
         if choice == "1":
             self.check_domain()
         elif choice == "2":
-            self.extract_domains_from_url()
-        elif choice == "3":
             self.extract_domains_from_file()
         else:
             print("Неверный выбор. Завершение работы.")
@@ -63,23 +45,14 @@ class DomainCheckerApp:
         else:
             print("Доменное имя некорректно.")
 
-    def extract_domains_from_url(self):
-        url = input("Введите URL веб-страницы: ").strip()
-        extractor = URLDomainExtractor(url)
-        try:
-            domains = extractor.extract()
-            if domains:
-                print("Найденные доменные имена:", domains)
-            else:
-                print("На странице доменные имена не найдены.")
-        except ValueError as e:
-            print(e)
-
     def extract_domains_from_file(self):
         file_path = input("Введите путь к файлу: ").strip()
         extractor = FileDomainExtractor(file_path)
         try:
             domains = extractor.extract()
+            with open(file_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+                print("Содержимое файла:\n", content)
             if domains:
                 print("Найденные доменные имена в файле:", domains)
             else:
